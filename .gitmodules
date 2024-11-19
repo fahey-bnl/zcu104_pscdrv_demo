@@ -1,0 +1,10 @@
+[submodule "pscdrv"]
+	path = pscdrv
+	url = https://github.com/mdavidsaver/pscdrv.git
+[submodule "epics-base"]
+	path = epics-base
+	url = https://github.com/epics-base/epics-base.git
+	branch = 7.0
+[submodule "fwk_prj/fwk"]
+	path = fwk_prj/fwk
+	url = https://gitlab.desy.de/fpgafw/fwk.git

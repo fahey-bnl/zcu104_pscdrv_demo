@@ -1,0 +1,21 @@
+set_property IOSTANDARD LVCMOS33 [get_ports miso]
+set_property PACKAGE_PIN G6 [get_ports miso]
+set_property IOSTANDARD LVCMOS33 [get_ports mosi]
+set_property PACKAGE_PIN H6 [get_ports mosi]
+set_property IOSTANDARD LVCMOS33 [get_ports sck]
+set_property PACKAGE_PIN G7 [get_ports sck]
+set_property IOSTANDARD LVCMOS33 [get_ports cs0]
+set_property PACKAGE_PIN H7 [get_ports cs0]
+
+set_property IOSTANDARD LVCMOS33 [get_ports cs1]
+set_property PACKAGE_PIN J6 [get_ports cs1]
+set_property IOSTANDARD LVCMOS33 [get_ports cs2]
+set_property PACKAGE_PIN J7 [get_ports cs2]
+
+set_property IOSTANDARD LVCMOS33 [get_ports pmodOut]
+set_property PACKAGE_PIN H8 [get_ports pmodOut]
+set_property IOSTANDARD LVCMOS33 [get_ports btn]
+set_property PACKAGE_PIN B4 [get_ports btn]
+
+set_property IOSTANDARD LVCMOS33 [get_ports squareWave]
+set_property PACKAGE_PIN G8 [get_ports squareWave]

@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: EPICS
 
-/* chp_iocMain.cpp */
+/* myiocMain.cpp */
 /* Author:  Marty Kraimer Date:    17MAR2000 */
 
 #include <stddef.h>

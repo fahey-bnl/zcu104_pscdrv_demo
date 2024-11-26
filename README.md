@@ -57,7 +57,8 @@
 
 4. Run the IOC:  
    ```bash
-   ./iocBoot/iocdemo/st.cmd
+   cd iocBoot/iocdemo
+   ./st.cmd
    ```
 
 ---
@@ -76,10 +77,9 @@
    make build cfg=sw
    ```
 
-> **Note**: Update the MAC address in the code to match the one displayed on the board. The EEPROM does not have the MAC address prewritten.
+> **Note**: Update the MAC address in the code to match the one displayed on the board. The EEPROM does not have the MAC address prewritten. 
 
 ---
 
-## Connection
-- Modern Ethernet cards typically support interpreting straight-through cables as crossover, so no special cables are required for directly connecting devices during development.  
+## Connection  
 - Connect both devices to the same network and ensure the IP addresses match on both the software and IOC sides.

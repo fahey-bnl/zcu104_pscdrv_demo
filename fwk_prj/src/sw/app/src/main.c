@@ -63,6 +63,11 @@ const char *build_time = __TIME__;
 void init_platform(void)
 {
     configIIC(0);
+    //Lower I2C fan speed on ZCU104
+    u8 wb[] = {0x02, 0xF7};
+    iic_chp_send(wb, 2, 0x20);
+    wb[0] = 0x06;
+    iic_chp_send(wb, 2, 0x20);
 }
 
 void print_ip(char *msg, ip_addr_t *ip)
@@ -74,7 +79,6 @@ void print_ip(char *msg, ip_addr_t *ip)
 
 void print_ip_settings(ip_addr_t *ip, ip_addr_t *mask, ip_addr_t *gw)
 {
-
 	print_ip("Board IP: ", ip);
 	print_ip("Netmask : ", mask);
 	print_ip("Gateway : ", gw);
@@ -125,7 +129,7 @@ void network_thread(void *p)
 	const TickType_t x1second = pdMS_TO_TICKS(DELAY_1_SECOND);
     struct netif *netif;
     /* the mac address of the board. this should be unique per board */
-    unsigned char mac_ethernet_address[] = { 0x00, 0x0a, 0x35, 0x00, 0x01, 0x02 };
+    unsigned char mac_ethernet_address[] = { 0x00, 0x0a, 0x35, 0x07, 0x20, 0x35 };
     ip_addr_t ipaddr, netmask, gw;
 
     netif = &server_netif;

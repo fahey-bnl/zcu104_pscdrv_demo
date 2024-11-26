@@ -45,7 +45,7 @@ record(longout, "pscReg") {
 }
 
 record(ai, "$(P)Temp1"){
-    field(DTYP, "PSC Reg")
+    field(DTYP, "PSC Reg F32")
     field(INP, "@$(INAME) 30")
     field(SCAN, "I/O Intr")
     field(TSE, "-2")
@@ -57,13 +57,13 @@ record(ai, "$(P)Temp2"){
     field(TSE, "-2")
 }
 record(ai, "$(P)Temp3"){
-    field(DTYP, "PSC Reg")
+    field(DTYP, "PSC Reg F32")
     field(INP, "@$(INAME) 30 8")
     field(SCAN, "I/O Intr")
     field(TSE, "-2")
 }
 record(ai, "$(P)Temp4"){
-    field(DTYP, "PSC Reg")
+    field(DTYP, "PSC Reg F32")
     field(INP, "@$(INAME) 30 8")
     field(SCAN, "I/O Intr")
     field(TSE, "-2")

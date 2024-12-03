@@ -21,6 +21,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include "sysmon_chp.h"
+
 #define THREAD_STACKSIZE 1024
 #define PORT  600
 
@@ -57,13 +59,24 @@ void Host2NetworkConvStatus(char *inbuf, char *outbuf) {
 }
 
 void ReadBrdTemp(u32 tdev, char *msg) {
-    u8 id; // = iic_temp_id(tdev);
-    s16 tempraw; // = iic_temp_raw(tdev);
-    float temp = 32;
-/*
-    printf("Dev %d: ID = 0x%02x   temp = 0x%04x (%0.2f)\r\n",
-           tdev, id, tempraw, temp);
-*/
+	float temp;
+
+	switch(tdev){
+		case 0:
+			temp = sysmon_ps_temp;
+			break;
+		case 1:
+			temp = sysmon_pl_temp;
+			break;
+		case 3:
+			temp = sysmon_vcc_int;
+			break;
+		default:
+			temp = sysmon_vcc_bram;
+	}
+
+    printf("Dev %d: temp = %0.2f\r\n",
+           tdev, temp);
     memcpy(msg,&temp,sizeof(s32));
 }
 

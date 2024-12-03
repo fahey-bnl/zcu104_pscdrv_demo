@@ -33,7 +33,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity top is
     Port ( 
-    btn : in std_logic
+    btn : in STD_LOGIC_VECTOR (3 downto 0);
+    led : out STD_LOGIC_VECTOR (3 downto 0)
     );
 end top;
 
@@ -41,7 +42,8 @@ architecture Behavioral of top is
 
 component design_1_wrapper is
     port(
-        inter : in STD_LOGIC
+        btns : in STD_LOGIC_VECTOR ( 3 downto 0 );
+        leds : out STD_LOGIC_VECTOR ( 3 downto 0 )
     );
 end component;
 
@@ -49,7 +51,8 @@ begin
 
 ZYNQ : component design_1_wrapper
     port map(
-    inter => btn
+    btns(3 downto 0) => btn(3 downto 0),
+    leds(3 downto 0) => led(3 downto 0)
     );
 
 end Behavioral;

@@ -21,6 +21,9 @@
 
 /* Hardware support includes */
 #include "iic_chp.h"
+#include "sysmon_chp.h"
+
+#include "xgpio.h"
 
 #define TIMER_ID                1
 #define BLINK_TIMER_ID          2
@@ -60,6 +63,8 @@ struct netif *echo_netif;
 const char *build_date = __DATE__;
 const char *build_time = __TIME__;
 
+XGpio Gpio;
+
 void init_platform(void)
 {
     configIIC(0);
@@ -68,6 +73,15 @@ void init_platform(void)
     iic_chp_send(wb, 2, 0x20);
     wb[0] = 0x06;
     iic_chp_send(wb, 2, 0x20);
+
+    sysmon_init();
+    XGpio_Config *ConfigPtr;
+    ConfigPtr = XGpio_LookupConfig(XPAR_AXI_GPIO_0_DEVICE_ID);
+    XGpio_CfgInitialize(&Gpio, ConfigPtr, ConfigPtr->BaseAddress);
+    XGpio_Initialize(&Gpio, XPAR_AXI_GPIO_0_DEVICE_ID);
+    XGpio_SetDataDirection(&Gpio, 1, 0x0F);
+    XGpio_DiscreteWrite(&Gpio, 1, 0);
+
 }
 
 void print_ip(char *msg, ip_addr_t *ip)
@@ -112,6 +126,20 @@ int main(void)
     return 0;
 }
 
+void leds_thread(){
+    const TickType_t x1second = pdMS_TO_TICKS(DELAY_1_SECOND);
+    u32 buf;
+    while(1){
+        XGpio_SetDataDirection(&Gpio, 1, 0x0F);
+        vTaskDelay(10);
+        buf = XGpio_DiscreteRead(&Gpio, 1);
+        xil_printf("%d\n", (buf & 0xF));
+        XGpio_SetDataDirection(&Gpio, 1, 0x00);
+        XGpio_DiscreteWrite(&Gpio, 1, !(buf & 0xF));
+        vTaskDelay(x1second);
+    }
+}
+
 int main_thread()
 {
 	/* initialize lwIP before calling sys_thread_new */
@@ -119,6 +147,8 @@ int main_thread()
 
     /* any thread using lwIP should be created using sys_thread_new */
     sys_thread_new("NW_THRD", network_thread, NULL, THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+
+    sys_thread_new("leds_thread", leds_thread, 0, THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
 
     vTaskDelete(NULL);
     return 0;

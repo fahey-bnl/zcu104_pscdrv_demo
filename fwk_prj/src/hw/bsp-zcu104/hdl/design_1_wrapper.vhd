@@ -13,20 +13,22 @@ library UNISIM;
 use UNISIM.VCOMPONENTS.ALL;
 entity design_1_wrapper is
   port (
-    
-    inter : in STD_LOGIC
+    btns : in STD_LOGIC_VECTOR ( 3 downto 0 );
+    leds : out STD_LOGIC_VECTOR ( 3 downto 0 )
   );
 end design_1_wrapper;
 
 architecture STRUCTURE of design_1_wrapper is
   component design_1 is
   port (
-    inter : in STD_LOGIC
+    btns : in STD_LOGIC_VECTOR ( 3 downto 0 );
+    leds : out STD_LOGIC_VECTOR ( 3 downto 0 )
   );
   end component design_1;
 begin
 design_1_i: component design_1
      port map (
-      inter => inter
+        btns => btns,
+        leds => leds
     );
 end STRUCTURE;

@@ -124,8 +124,6 @@ set bCheckIPsPassed 1
 set bCheckIPs 1
 if { $bCheckIPs == 1 } {
    set list_check_ips "\ 
-xilinx.com:ip:axi_gpio:2.0\
-xilinx.com:ip:proc_sys_reset:5.0\
 xilinx.com:ip:zynq_ultra_ps_e:3.4\
 "
 
@@ -192,26 +190,8 @@ proc create_root_design { parentCell } {
   # Create interface ports
 
   # Create ports
-  set inter [ create_bd_port -dir I inter ]
-
-  # Create instance: axi_gpio_0, and set properties
-  set axi_gpio_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_gpio_0 ]
-  set_property -dict [list \
-    CONFIG.C_ALL_INPUTS {1} \
-    CONFIG.C_GPIO_WIDTH {1} \
-    CONFIG.C_INTERRUPT_PRESENT {1} \
-    CONFIG.GPIO_BOARD_INTERFACE {Custom} \
-    CONFIG.USE_BOARD_FLOW {true} \
-  ] $axi_gpio_0
-
-
-  # Create instance: ps8_0_axi_periph, and set properties
-  set ps8_0_axi_periph [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 ps8_0_axi_periph ]
-  set_property CONFIG.NUM_MI {1} $ps8_0_axi_periph
-
-
-  # Create instance: rst_ps8_0_100M, and set properties
-  set rst_ps8_0_100M [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 rst_ps8_0_100M ]
+  set btns [ create_bd_port -dir I -from 3 -to 0 btns ]
+  set leds [ create_bd_port -dir O -from 3 -to 0 leds ]
 
   # Create instance: zynq_ultra_ps_e_0, and set properties
   set zynq_ultra_ps_e_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.4 zynq_ultra_ps_e_0 ]
@@ -222,6 +202,18 @@ proc create_root_design { parentCell } {
     CONFIG.PSU_DDR_RAM_HIGHADDR {0x7FFFFFFF} \
     CONFIG.PSU_DDR_RAM_HIGHADDR_OFFSET {0x00000002} \
     CONFIG.PSU_DDR_RAM_LOWADDR_OFFSET {0x80000000} \
+    CONFIG.PSU_MIO_10_DIRECTION {inout} \
+    CONFIG.PSU_MIO_11_DIRECTION {inout} \
+    CONFIG.PSU_MIO_12_DIRECTION {inout} \
+    CONFIG.PSU_MIO_13_DIRECTION {inout} \
+    CONFIG.PSU_MIO_14_DIRECTION {inout} \
+    CONFIG.PSU_MIO_15_DIRECTION {inout} \
+    CONFIG.PSU_MIO_22_DIRECTION {inout} \
+    CONFIG.PSU_MIO_22_INPUT_TYPE {cmos} \
+    CONFIG.PSU_MIO_23_DIRECTION {inout} \
+    CONFIG.PSU_MIO_7_DIRECTION {inout} \
+    CONFIG.PSU_MIO_8_DIRECTION {inout} \
+    CONFIG.PSU_MIO_9_DIRECTION {inout} \
     CONFIG.PSU_MIO_TREE_PERIPHERALS {Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Quad SPI Flash#Feedback Clk##########I2C 1#I2C 1#UART 0#UART 0#UART 1#UART 1###CAN 1#CAN\
 1##DPAUX#DPAUX#DPAUX#DPAUX###############SD 1#SD 1#SD 1#SD 1#SD 1#SD 1#SD 1#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#USB 0#Gem 3#Gem 3#Gem 3#Gem 3#Gem 3#Gem 3#Gem 3#Gem 3#Gem 3#Gem\
 3#Gem 3#Gem 3#MDIO 3#MDIO 3} \
@@ -402,6 +394,10 @@ proc create_root_design { parentCell } {
     CONFIG.PSU__GEM__TSU__ENABLE {0} \
     CONFIG.PSU__GPIO0_MIO__PERIPHERAL__ENABLE {0} \
     CONFIG.PSU__GPIO1_MIO__PERIPHERAL__ENABLE {0} \
+    CONFIG.PSU__GPIO2_MIO__PERIPHERAL__ENABLE {0} \
+    CONFIG.PSU__GPIO_EMIO_WIDTH {4} \
+    CONFIG.PSU__GPIO_EMIO__PERIPHERAL__ENABLE {1} \
+    CONFIG.PSU__GPIO_EMIO__PERIPHERAL__IO {4} \
     CONFIG.PSU__GT__LINK_SPEED {HBR} \
     CONFIG.PSU__GT__PRE_EMPH_LVL_4 {0} \
     CONFIG.PSU__GT__VLT_SWNG_LVL_4 {0} \
@@ -498,27 +494,20 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   ] $zynq_ultra_ps_e_0
 
 
-  # Create interface connections
-  connect_bd_intf_net -intf_net ps8_0_axi_periph_M00_AXI [get_bd_intf_pins axi_gpio_0/S_AXI] [get_bd_intf_pins ps8_0_axi_periph/M00_AXI]
-  connect_bd_intf_net -intf_net zynq_ultra_ps_e_0_M_AXI_HPM0_FPD [get_bd_intf_pins ps8_0_axi_periph/S00_AXI] [get_bd_intf_pins zynq_ultra_ps_e_0/M_AXI_HPM0_FPD]
-
   # Create port connections
-  connect_bd_net -net axi_gpio_0_ip2intc_irpt [get_bd_pins axi_gpio_0/ip2intc_irpt] [get_bd_pins zynq_ultra_ps_e_0/pl_ps_irq0]
-  connect_bd_net -net inter_1 [get_bd_ports inter] [get_bd_pins axi_gpio_0/gpio_io_i]
-  connect_bd_net -net rst_ps8_0_100M_peripheral_aresetn [get_bd_pins axi_gpio_0/s_axi_aresetn] [get_bd_pins ps8_0_axi_periph/ARESETN] [get_bd_pins ps8_0_axi_periph/M00_ARESETN] [get_bd_pins ps8_0_axi_periph/S00_ARESETN] [get_bd_pins rst_ps8_0_100M/peripheral_aresetn]
-  connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0 [get_bd_pins axi_gpio_0/s_axi_aclk] [get_bd_pins ps8_0_axi_periph/ACLK] [get_bd_pins ps8_0_axi_periph/M00_ACLK] [get_bd_pins ps8_0_axi_periph/S00_ACLK] [get_bd_pins rst_ps8_0_100M/slowest_sync_clk] [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk] [get_bd_pins zynq_ultra_ps_e_0/maxihpm1_fpd_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk0]
-  connect_bd_net -net zynq_ultra_ps_e_0_pl_resetn0 [get_bd_pins rst_ps8_0_100M/ext_reset_in] [get_bd_pins zynq_ultra_ps_e_0/pl_resetn0]
+  connect_bd_net -net btns_1 [get_bd_ports btns] [get_bd_pins zynq_ultra_ps_e_0/emio_gpio_i]
+  connect_bd_net -net zynq_ultra_ps_e_0_emio_gpio_o [get_bd_ports leds] [get_bd_pins zynq_ultra_ps_e_0/emio_gpio_o]
+  connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0 [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk] [get_bd_pins zynq_ultra_ps_e_0/maxihpm1_fpd_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk0]
 
   # Create address segments
-  assign_bd_address -offset 0xA0000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs axi_gpio_0/S_AXI/Reg] -force
 
 
   # Restore current instance
   current_bd_instance $oldCurInst
 
   # Create PFM attributes
-  set_property PFM.CLOCK {pl_clk0 {id "0" is_default "true" proc_sys_reset "/rst_ps8_0_100M" status "fixed" freq_hz "100000000"}} [get_bd_cells /zynq_ultra_ps_e_0]
   set_property PFM.AXI_PORT {M_AXI_HPM0_LPD {memport "M_AXI_GP" sptag "" memory "" is_range "false"}} [get_bd_cells /zynq_ultra_ps_e_0]
+  set_property PFM.CLOCK {pl_clk0 {id "0" is_default "true" proc_sys_reset "" status "fixed" freq_hz "100000000"}} [get_bd_cells /zynq_ultra_ps_e_0]
 
 
   validate_bd_design

@@ -12,15 +12,14 @@
 #include "netif/xadapter.h"
 #include "xil_printf.h"
 
-
 /* Xilinx includes */
 #include "xil_printf.h"
 #include "xparameters.h"
 #include <assert.h>
 
-
 /* Hardware support includes */
 #include "iic_chp.h"
+#include "sysmon_chp.h"
 
 #define TIMER_ID                1
 #define BLINK_TIMER_ID          2
@@ -37,25 +36,17 @@
 
 #define PLATFORM_EMAC_BASEADDR XPAR_XEMACPS_0_BASEADDR
 
-/* The Tx and Rx tasks as described at the top of this file. */
-//static void prvTxTask( void *pvParameters );
-//static void prvRxTask( void *pvParameters );
-//static void prvChpTestTask( void *pvParameters );
-//static void vTimerCallback( TimerHandle_t pxTimer );
-//static void vBlinkTimerCallback( TimerHandle_t pxTimer );
 int main_thread();
 void print_echo_app_header();
 void psc_control_thread(void *);
 void psc_status_thread(void *);
 void network_thread(void *);
 
-
 char HWstring[15] = "Hello World";
 long RxtaskCntr = 0;
 
 static struct netif server_netif;
 struct netif *echo_netif;
-
 
 const char *build_date = __DATE__;
 const char *build_time = __TIME__;
@@ -68,6 +59,8 @@ void init_platform(void)
     iic_chp_send(wb, 2, 0x20);
     wb[0] = 0x06;
     iic_chp_send(wb, 2, 0x20);
+
+    sysmon_init();
 }
 
 void print_ip(char *msg, ip_addr_t *ip)

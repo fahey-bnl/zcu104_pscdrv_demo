@@ -21,6 +21,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include "sysmon_chp.h"
+
 #define THREAD_STACKSIZE 1024
 #define PORT  600
 
@@ -57,13 +59,24 @@ void Host2NetworkConvStatus(char *inbuf, char *outbuf) {
 }
 
 void ReadBrdTemp(u32 tdev, char *msg) {
-    u8 id; // = iic_temp_id(tdev);
-    s16 tempraw; // = iic_temp_raw(tdev);
-    float temp = 32;
-/*
-    printf("Dev %d: ID = 0x%02x   temp = 0x%04x (%0.2f)\r\n",
-           tdev, id, tempraw, temp);
-*/
+	float temp;
+
+	switch(tdev){
+		case 0:
+			temp = sysmon_ps_temp;
+			break;
+		case 1:
+			temp = sysmon_pl_temp;
+			break;
+		case 3:
+			temp = sysmon_vcc_int;
+			break;
+		default:
+			temp = sysmon_vcc_bram;
+	}
+
+    printf("Dev %d: temp = %0.2f\r\n",
+           tdev, temp);
     memcpy(msg,&temp,sizeof(s32));
 }
 
@@ -86,7 +99,6 @@ void psc_status_thread()
     int *msgid30_bufptr;
     int n;
 
-
     xil_printf("Starting PSC Status Server...\r\n");
 
 	// Initialize socket structure
@@ -101,20 +113,16 @@ void psc_status_thread()
 		vTaskDelete(NULL);
 	}
 
-
     // Bind to the host address using bind()
 	if (lwip_bind(sockfd, (struct sockaddr *)&serv_addr, sizeof (serv_addr)) < 0) {
 		xil_printf("Error: PSC Status : Creating Socket");
 		vTaskDelete(NULL);
 	}
 
-
     // Now start listening for the clients
 	lwip_listen(sockfd, 0);
 
-
     xil_printf("PSC Status Server listening on port %d...\r\n",PORT);
-
 
 reconnect:
 
@@ -128,7 +136,6 @@ reconnect:
 	/* If connection is established then start communicating */
 	xil_printf("PSC Status: Connected Accepted...\r\n");
 
-
     //initialize the 1Hz status registers
     bzero(msgid30_buf,sizeof(msgid30_buf));
     msgid30_bufptr = (int *)msgid30_buf;
@@ -141,15 +148,11 @@ reconnect:
     xil_printf("PSC Status: Entering while loop...\r\n");
 
 	while (1) {
-
 		xil_printf("In main loop...\r\n");
 
 		ReadSysInfo(&msgid30_buf[MSGHDRLEN]);
 		xil_printf("\r\n");
-		//test_adt7410();
-
-
-		/* Delay for 1 second. */
+		
         vTaskDelay(x1second);
 
 		Host2NetworkConvStatus(msgid30_buf,msgid30_bufntoh);
@@ -159,9 +162,6 @@ reconnect:
 	           close(newsockfd);
 	           goto reconnect;
 	        }
-
-
-
 	}
 
 	/* close connection */

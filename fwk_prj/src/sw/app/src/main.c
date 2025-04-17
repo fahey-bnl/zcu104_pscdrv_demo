@@ -17,10 +17,6 @@
 #include "xparameters.h"
 #include <assert.h>
 
-/* Hardware support includes */
-#include "iic_chp.h"
-#include "sysmon_chp.h"
-
 #define TIMER_ID                1
 #define BLINK_TIMER_ID          2
 #define DELAY_100_MS            100UL

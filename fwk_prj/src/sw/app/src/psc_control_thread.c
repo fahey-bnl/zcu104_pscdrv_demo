@@ -21,29 +21,10 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-/* Hardware support includes */
-#include "iic_chp.h"
+#include "sampleVars.h"
 
 #define THREAD_STACKSIZE 1024
 #define PORT  7
-
-#define SET_TOP_FP_LED_MSG 0
-#define SET_BOT_FP_LED_MSG 4
-
-#define TOP_FP_LED 0
-#define BOT_FP_LED 1
-
-#define IIC_ADDR 2
-#define IIC_DATA 3
-#define IIC_WRIT 4
-#define IIC_READ 5
-
-u8 iicAddr, iicData;
-
-void set_fpleds(int whichled, int msgVal)
-{
-	xil_printf("LED %d, %d", whichled, msgVal & 0x1);
-}
 
 void psc_control_thread()
 {
@@ -53,7 +34,7 @@ void psc_control_thread()
 	int RECV_BUF_SIZE = 2048;
 	char buffer[RECV_BUF_SIZE];
 	int n, *bufptr, numpackets=0;
-    int MsgAddr, MsgData;
+    int MsgAddr, MsgData, MsgID;
 
 	iicAddr = iicData = 0;
 
@@ -104,11 +85,15 @@ reconnect:
         bufptr = (int *) buffer;
         xil_printf("\nPacket %d Received : NumBytes = %d\r\n",++numpackets,n);
         xil_printf("Header: %c%c \t",buffer[0],buffer[1]);
-        xil_printf("Message ID : %d\t",(ntohl(*bufptr++)&0xFFFF));
+		MsgID = (ntohl(*bufptr++)&0xFFFF);
+        xil_printf("Message ID : %d\t",MsgID);
         xil_printf("Body Length : %d\t",ntohl(*bufptr++));
-        MsgAddr = ntohl(*bufptr++);
-        xil_printf("Msg Addr : %d\t",MsgAddr);
-	    MsgData = ntohl(*bufptr);
+        
+		/* If the single register sub-protocol is used, uncomment the following lines */
+		// MsgAddr = ntohl(*bufptr++);
+        // xil_printf("Msg Addr : %d\t",MsgAddr);
+		
+		MsgData = ntohl(*bufptr);
         xil_printf("Data : %d\r\n",MsgData);
 
 

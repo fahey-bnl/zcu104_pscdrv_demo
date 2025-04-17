@@ -21,8 +21,6 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "sysmon_chp.h"
-
 #define THREAD_STACKSIZE 1024
 #define PORT  600
 
@@ -32,13 +30,6 @@
 //This message is for slow status
 #define MSGID30 30
 #define MSGID30LEN 748   //in bytes
-
-// System Health Status Readback offsets
-// 1Hz
-#define TEMP_SENSE0_MSGOFF 0
-#define TEMP_SENSE1_MSGOFF 4
-#define TEMP_SENSE2_MSGOFF 8
-#define TEMP_SENSE3_MSGOFF 12
 
 #define DELAY_1_SECOND            1000UL
 
@@ -58,34 +49,8 @@ void Host2NetworkConvStatus(char *inbuf, char *outbuf) {
     }
 }
 
-void ReadBrdTemp(u32 tdev, char *msg) {
-	float temp;
-
-	switch(tdev){
-		case 0:
-			temp = sysmon_ps_temp;
-			break;
-		case 1:
-			temp = sysmon_pl_temp;
-			break;
-		case 3:
-			temp = sysmon_vcc_int;
-			break;
-		default:
-			temp = sysmon_vcc_bram;
-	}
-
-    printf("Dev %d: temp = %0.2f\r\n",
-           tdev, temp);
-    memcpy(msg,&temp,sizeof(s32));
-}
-
 void ReadSysInfo(char *msg) {
-	// Read the 4 CHP Temperature Sensors
-	ReadBrdTemp(0,&msg[TEMP_SENSE0_MSGOFF]);
-	ReadBrdTemp(1,&msg[TEMP_SENSE1_MSGOFF]);
-	ReadBrdTemp(2,&msg[TEMP_SENSE2_MSGOFF]);
-	ReadBrdTemp(3,&msg[TEMP_SENSE3_MSGOFF]);
+	memcpy(msg,&temp,sizeof(s32));
 }
 
 void psc_status_thread()

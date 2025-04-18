@@ -21,6 +21,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include "sampleVars.h"
+
 #define THREAD_STACKSIZE 1024
 #define PORT  600
 
@@ -50,7 +52,11 @@ void Host2NetworkConvStatus(char *inbuf, char *outbuf) {
 }
 
 void ReadSysInfo(char *msg) {
-	memcpy(msg,&temp,sizeof(s32));
+	memcpy(msg,SAMPLE_INT,sizeof(s32));
+	memcpy(msg+4,SAMPLE_FLOAT,sizeof(s32));
+
+	memcpy(msg+12,SAMPLE_DOUBLE,sizeof(s32));
+	memcpy(msg+8,SAMPLE_DOUBLE+4,sizeof(s32));
 }
 
 void psc_status_thread()

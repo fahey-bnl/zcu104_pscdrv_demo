@@ -26,6 +26,9 @@
 #define THREAD_STACKSIZE 1024
 #define PORT  7
 
+#define REG_ID 7
+#define DOUBLE_ID 8
+
 void psc_control_thread()
 {
 	int sockfd, newsockfd;
@@ -35,8 +38,6 @@ void psc_control_thread()
 	char buffer[RECV_BUF_SIZE];
 	int n, *bufptr, numpackets=0;
     int MsgAddr, MsgData, MsgID;
-
-	iicAddr = iicData = 0;
 
     xil_printf("Starting PSC Control Server...\r\n");
 
@@ -88,26 +89,34 @@ reconnect:
 		MsgID = (ntohl(*bufptr++)&0xFFFF);
         xil_printf("Message ID : %d\t",MsgID);
         xil_printf("Body Length : %d\t",ntohl(*bufptr++));
-        
-		/* If the single register sub-protocol is used, uncomment the following lines */
-		// MsgAddr = ntohl(*bufptr++);
-        // xil_printf("Msg Addr : %d\t",MsgAddr);
-		
-		MsgData = ntohl(*bufptr);
-        xil_printf("Data : %d\r\n",MsgData);
 
+        switch(MsgID) {
+		case REG_ID:
+			MsgAddr = ntohl(*bufptr++);
+			xil_printf("Msg Addr : %d\t",MsgAddr);
+			MsgData = ntohl(*bufptr);
+			xil_printf("Data : %d\r\n",MsgData);
 
-        switch(MsgAddr) {
-		case SET_TOP_FP_LED_MSG:
-		    printf("Setting TOP FP LED:   Value=%d\n",MsgData);
-            set_fpleds(TOP_FP_LED,MsgData);
-		    break;
+			switch(MsgAddr){
+			case 0:
+				memcpy(SAMPLE_INT, &MsgData, sizeof(s32));
+				break;
+			case 1:
+				memcpy(SAMPLE_FLOAT, &MsgData, sizeof(s32));
+				break;
+			default:
+				xil_printf("Unsupported Register\r\n");
+				break;
+			}
+			break;
+		case DOUBLE_ID:
+			u32 high = ntohl(*bufptr++);
+			u32 low = ntohl(*bufptr);
+			xil_printf("Data: 0x%4X %4X\n", high, low);
 
-		case SET_BOT_FP_LED_MSG:
-		    printf("Setting BOT FP LED:   Value=%d\n",MsgData);
-            set_fpleds(BOT_FP_LED,MsgData);
-		    break;
-			
+			memcpy(SAMPLE_DOUBLE, &low, sizeof(u32));
+			memcpy(SAMPLE_DOUBLE + 4, &high, sizeof(u32));
+
         default:
         	xil_printf("Msg not supported yet...\r\n");
         	break;

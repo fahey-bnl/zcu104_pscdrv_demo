@@ -47,18 +47,6 @@ struct netif *echo_netif;
 const char *build_date = __DATE__;
 const char *build_time = __TIME__;
 
-void init_platform(void)
-{
-    configIIC(0);
-    //Lower I2C fan speed on ZCU104
-    u8 wb[] = {0x02, 0xF7};
-    iic_chp_send(wb, 2, 0x20);
-    wb[0] = 0x06;
-    iic_chp_send(wb, 2, 0x20);
-
-    sysmon_init();
-}
-
 void print_ip(char *msg, ip_addr_t *ip)
 {
 	xil_printf(msg);
@@ -78,9 +66,6 @@ int main(void)
     //const TickType_t xStopTimeTicks = pdMS_TO_TICKS(DELAY_STOP_HELLO);
 
     xil_printf("Hello PSC example main\r\n");
-    init_platform();
-    xil_printf("  Initialized platform\r\n\r\n");
-
 	sys_thread_new("main_thrd", (void(*)(void*))main_thread, 0,
 	                THREAD_STACKSIZE,
 	                DEFAULT_THREAD_PRIO);

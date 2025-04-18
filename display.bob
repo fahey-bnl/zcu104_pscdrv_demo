@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Saved on 2025-04-18 13:30:09 by kfahey-->
+<display version="2.0.0">
+  <name>Main</name>
+  <width>1010</width>
+  <height>570</height>
+  <grid_color>
+    <color red="127" green="127" blue="127">
+    </color>
+  </grid_color>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update</name>
+    <pv_name>debug:sampleInt_I</pv_name>
+    <x>210</x>
+    <y>70</y>
+    <width>120</width>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_1</name>
+    <pv_name>debug:sampleFloat_I</pv_name>
+    <x>210</x>
+    <y>100</y>
+    <width>120</width>
+  </widget>
+  <widget type="textupdate" version="2.0.0">
+    <name>Text Update_2</name>
+    <pv_name>debug:sampleDouble_I</pv_name>
+    <x>210</x>
+    <y>130</y>
+    <width>120</width>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>Text Entry</name>
+    <pv_name>debug:sampleInt_O</pv_name>
+    <x>350</x>
+    <y>70</y>
+    <width>120</width>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>Text Entry_1</name>
+    <pv_name>debug:sampleFloat_O</pv_name>
+    <x>350</x>
+    <y>100</y>
+    <width>120</width>
+  </widget>
+  <widget type="textentry" version="3.0.0">
+    <name>Text Entry_2</name>
+    <pv_name>debug:sampleDouble_O</pv_name>
+    <x>350</x>
+    <y>130</y>
+    <width>120</width>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label</name>
+    <text>Sample Int</text>
+    <x>90</x>
+    <y>70</y>
+    <width>90</width>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_1</name>
+    <text>Sample Float</text>
+    <x>90</x>
+    <y>100</y>
+    <width>90</width>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>Label_2</name>
+    <text>Sample Double</text>
+    <x>90</x>
+    <y>130</y>
+  </widget>
+</display>

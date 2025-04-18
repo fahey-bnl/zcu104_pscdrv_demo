@@ -45,14 +45,16 @@ record(longout, "$(P)sampleInt_O") {
 
 record(ao, "$(P)sampleFloat_O") {
     field(DTYP, "PSC Single F32")
-    field(OUT, "@$(ONAME) 4 0")
+    field(OUT, "@$(ONAME) 4 1")
     field(FLNK, "$(P)Send:4")
+    field(PREC, "3")
 }
 
 record(ao, "$(P)sampleDouble_O") {
     field(DTYP, "PSC Reg F64")
     field(OUT, "@$(ONAME) 5 0")
     field(FLNK, "$(P)Send:5")
+    field(PREC, "3")
 }
 
 record(longin, "$(P)sampleInt_I"){
@@ -67,6 +69,7 @@ record(ai, "$(P)sampleFloat_I"){
     field(INP, "@$(INAME) 30 4")
     field(SCAN, "I/O Intr")
     field(TSE, "-2")
+    field(PREC, "3")
 }
 
 record(ai, "$(P)sampleDouble_I"){
@@ -74,4 +77,5 @@ record(ai, "$(P)sampleDouble_I"){
     field(INP, "@$(INAME) 30 8")
     field(SCAN, "I/O Intr")
     field(TSE, "-2")
+    field(PREC, "3")
 }

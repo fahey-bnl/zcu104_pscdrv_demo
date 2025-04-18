@@ -23,6 +23,13 @@ record(longout, "$(P)Send:4") {
     field(FLNK, "$(P)Send")
 }
 
+record(longout, "$(P)Send:5") {
+    field(DTYP, "PSC Ctrl Send")
+    field(OUT , "@$(ONAME)")
+    field(VAL , "5") # message ID
+    field(FLNK, "$(P)Send")
+}
+
 record(bo, "$(P)Send") {
     field(DTYP, "PSC Ctrl Send All")
     field(OUT , "@$(ONAME)")
@@ -30,40 +37,40 @@ record(bo, "$(P)Send") {
     field(ONAM, "Send")
 }
 
-record(calcout, "togglePV") {
-    field(DESC, "toggles btwn 0 and 1")
-    field(CALC, "A?0:1")
-    field(SCAN, "5 second")
-    field(INPA, "togglePV")
-    field(OUT, "pscReg PP")
-}
-
-record(longout, "pscReg") {
+record(longout, "$(P)sampleInt_O") {
     field(DTYP, "PSC Single I32")
-    field(OUT, "@$(ONAME) 4 4")
+    field(OUT, "@$(ONAME) 4 0")
     field(FLNK, "$(P)Send:4")
 }
 
-record(ai, "$(P)Temp1"){
-    field(DTYP, "PSC Reg F32")
+record(ao, "$(P)sampleFloat_O") {
+    field(DTYP, "PSC Single F32")
+    field(OUT, "@$(ONAME) 4 0")
+    field(FLNK, "$(P)Send:4")
+}
+
+record(ao, "$(P)sampleDouble_O") {
+    field(DTYP, "PSC Reg F64")
+    field(OUT, "@$(ONAME) 5 0")
+    field(FLNK, "$(P)Send:5")
+}
+
+record(longin, "$(P)sampleInt_I"){
+    field(DTYP, "PSC Reg")
     field(INP, "@$(INAME) 30")
     field(SCAN, "I/O Intr")
     field(TSE, "-2")
 }
-record(ai, "$(P)Temp2"){
+
+record(ai, "$(P)sampleFloat_I"){
     field(DTYP, "PSC Reg F32")
     field(INP, "@$(INAME) 30 4")
     field(SCAN, "I/O Intr")
     field(TSE, "-2")
 }
-record(ai, "$(P)Temp3"){
-    field(DTYP, "PSC Reg F32")
-    field(INP, "@$(INAME) 30 8")
-    field(SCAN, "I/O Intr")
-    field(TSE, "-2")
-}
-record(ai, "$(P)Temp4"){
-    field(DTYP, "PSC Reg F32")
+
+record(ai, "$(P)sampleDouble_I"){
+    field(DTYP, "PSC Reg F64")
     field(INP, "@$(INAME) 30 8")
     field(SCAN, "I/O Intr")
     field(TSE, "-2")

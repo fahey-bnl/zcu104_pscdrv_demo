@@ -15,8 +15,8 @@ zcu104Test_registerRecordDeviceDriver(pdbbase)
 
 ## Load dev1: device input @ 192.168.1.10:7 with receive timeout turned off
 createPSC("dev1", "192.168.1.10", 7, 0)
-setPSCSendBlockSize("dev1", 0, 8)
 setPSCSendBlockSize("dev1", 4, 8)
+setPSCSendBlockSize("dev1", 5, 8)
 
 ## Load dev2: device output @ 192.168.1.10:600 with receive timeout turned on
 createPSC("dev2", "192.168.1.10", 600, 1)

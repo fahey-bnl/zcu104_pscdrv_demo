@@ -26,8 +26,8 @@
 #define THREAD_STACKSIZE 1024
 #define PORT  7
 
-#define REG_ID 7
-#define DOUBLE_ID 8
+#define REG_ID 4
+#define DOUBLE_ID 5
 
 void psc_control_thread()
 {
